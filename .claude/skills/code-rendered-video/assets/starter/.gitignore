@@ -1,0 +1,20 @@
+# installed packages (bun install brings them back)
+node_modules/
+
+# captures, exports and build output
+out/
+dist/
+.vite/
+*.tsbuildinfo
+
+# the Python environment of the music analysis (made again on each machine)
+analysis/python-env/
+
+# left by an interrupted run of scripts/build-shot-files.py
+*.tmp
+
+# the capture lock, in case this folder is the root it lands in
+.render.lock/
+
+# OS
+.DS_Store

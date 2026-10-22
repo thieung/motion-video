@@ -1,0 +1,55 @@
+{
+  "comment": "The music and the sound effects of the film, as data. Rendered by bun run score (scripts/make-score.ts) to `out`, and its beat grid to data/audio.json. Bars and beats count from zero, as in shots.json. Pattern lines: drums and effects are steps (X full, x normal, o soft, . rest, - hold); bass, pad and pluck are words (a note A1, a chord A3+C4+E4, . rest, - hold). Every cue names the event of the picture it marks.",
+  "tempo": 120,
+  "seed": 7,
+  "sampleRate": 48000,
+  "out": "audio/score.wav",
+  "tail": 1.5,
+  "master": {"lufs": -14, "ceiling": -1},
+  "buses": {
+    "drums": {"gain": -1, "reverb": 0.04},
+    "bass":  {"gain": -2, "duck": 6},
+    "music": {"gain": -2, "reverb": 0.3, "delay": 0.12, "duck": 8},
+    "sfx":   {"gain": -3, "reverb": 0.2},
+    "voice": {"gain": 0, "key": true}
+  },
+  "duck": {"attack": 0.12, "release": 0.45, "hold": 0.35},
+  "reverb": {"size": 0.8, "damp": 0.35},
+  "delay": {"beats": 0.75, "feedback": 0.3},
+  "instruments": {
+    "kick":   {"type": "kick", "bus": "drums"},
+    "clap":   {"type": "clap", "bus": "drums", "gain": -5},
+    "hat":    {"type": "hat", "bus": "drums", "gain": -10, "pan": 0.2},
+    "bass":   {"type": "bass", "bus": "bass", "gain": -4},
+    "pad":    {"type": "pad", "bus": "music", "gain": -7},
+    "pluck":  {"type": "pluck", "bus": "music", "gain": -9, "pan": -0.2},
+    "riser":  {"type": "riser", "bus": "sfx", "gain": -9},
+    "impact": {"type": "impact", "bus": "sfx", "gain": -9},
+    "whoosh": {"type": "whoosh", "bus": "sfx", "gain": -9},
+    "ding":   {"type": "click", "bus": "sfx", "gain": -10, "decay": 0.15, "noise": 0}
+  },
+  "patterns": {
+    "chords":  {"bars": 4, "tracks": {"pad": "A3+C4+E4 F3+A3+C4 C4+E4+G4 G3+B3+D4"}},
+    "arp":     {"bars": 4, "tracks": {"pluck": "A4 . E5 . C5 . E5 .  F4 . C5 . A4 . C5 .  G4 . E5 . C5 . E5 .  G4 . D5 . B4 . D5 ."}},
+    "bassOff": {"bars": 4, "tracks": {"bass": ". A1 . A1 . A1 . A1  . F1 . F1 . F1 . F1  . C2 . C2 . C2 . C2  . G1 . G1 . G1 . G1"}},
+    "hats":    {"tracks": {"hat": "..x...x...x...x."}},
+    "beat":    {"tracks": {"kick": "X...x...x...x...", "clap": "....x.......x...", "hat": "..x...x...x...x."}},
+    "kickOnly":{"tracks": {"kick": "X...x...x...x..."}}
+  },
+  "sections": [
+    {"name": "open",  "bars": 2, "play": ["chords"]},
+    {"name": "water", "bars": 7, "play": ["chords", "hats", {"pattern": "bassOff", "gain": -4}]},
+    {"name": "steep", "bars": 9, "play": ["chords", "beat", "bassOff", "arp"]},
+    {"name": "recap", "bars": 2, "play": ["kickOnly", "arp", "chords"]},
+    {"name": "end",   "bars": 4, "play": ["chords", {"pattern": "arp", "gain": -6}]}
+  ],
+  "cues": [
+    {"at": {"bar": 1}, "sound": "impact", "gain": -6, "why": "The name of the film lands on the downbeat of the second bar."},
+    {"at": {"shot": "water-cold-kettle"}, "sound": "whoosh", "beats": 1, "why": "The whip into the kettle peaks on the cut."},
+    {"at": {"bar": 9}, "sound": "riser", "beats": 4, "why": "The last bar before the drop climbs into it."},
+    {"at": {"shot": "steep-leaves-drop"}, "sound": "impact", "why": "The name Steep lands on the drop."},
+    {"at": {"shot": "steep-timer-rings", "beat": 4}, "sound": "ding", "note": "E6", "why": "The sand timer runs out and rings."},
+    {"at": {"shot": "steep-timer-rings", "beat": 4.5}, "sound": "ding", "note": "E6", "gain": -4, "why": "It rings a second time."}
+  ],
+  "voice": "data/voice.json"
+}
