@@ -33,7 +33,10 @@ const EXTRAS = ['audio', 'video', 'webkit', 'blender'];
 const route = opt('route', 'engine');
 const extras = (opt('with', '') || '').split(',').map((s) => s.trim()).filter(Boolean);
 if (flag('help') || flag('h')) {
-  console.log(fs.readFileSync(new URL(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).map((l) => l.slice(3)).join('\n'));
+  // the comment at the head of this file, up to the first line of code
+  const lines = fs.readFileSync(new URL(import.meta.url), 'utf8').split('\n').slice(1);
+  const head = lines.slice(0, lines.findIndex((l) => !l.startsWith('//')));
+  console.log(head.map((l) => l.slice(3)).join('\n'));
   process.exit(0);
 }
 if (!ROUTES.includes(route)) { console.error(`--route must be one of: ${ROUTES.join(', ')}`); process.exit(2); }

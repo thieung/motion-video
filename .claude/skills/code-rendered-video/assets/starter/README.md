@@ -81,6 +81,8 @@ $P analysis/plot-beat-grid-qa.py audio/track.wav data/audio.json out/grid-qa    
 bun run shots                                                                    # always last
 ```
 
+`analyze-beat-grid.py` looks for a tempo between 125 and 180 BPM unless told otherwise. A slower track stops with "too few regular kicks in the tempo range": pass a range that holds its tempo and not half or double of it, for example `--bpm-min 90 --bpm-max 150` for a track near 120 BPM. When the bass hits harder than the kick, the grid can land half a beat late with the right tempo; the zoom images show it as kicks starting between the lines.
+
 | Script | Does |
 |---|---|
 | `analysis/analyze-beat-grid.py` | Beats by following the kicks, bars, energy features; writes the file the app reads |
