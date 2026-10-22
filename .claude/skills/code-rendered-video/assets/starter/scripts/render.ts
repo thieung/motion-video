@@ -29,6 +29,8 @@
 //            studio or a private server, e.g. --page out/single/starter-film.html
 //   --scale N (all modes): render at N× the configured size (--scale 2 on 1920x1080 = true 3840x2160);
 //            stills are then saved full-res from the pixel buffer, videos are encoded at the physical size.
+//   CHROME_PATH (environment): the browser for captures. Without it: Google Chrome, else another
+//            Chromium-family browser on the machine (Chromium, Edge, the Chromium of Playwright).
 //   --angle B (all modes): the graphics backend of Chrome: metal, d3d11, gl, vulkan, swiftshader or
 //            default. Without it: metal on macOS, d3d11 on Windows, gl on Linux. Check with `gpu`.
 // Starts a private server without live reload and stops it when done, so a file saved during a
@@ -38,7 +40,7 @@
 // Video export (mode `video`) is refused unless the environment variable OWNER_ASKED_FOR_VIDEO is
 // `yes`, which the lead sets only when the owner asked for a video file in the current conversation.
 import { chromium, type Page } from 'playwright-core';
-import { mkdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, existsSync, readFileSync, readdirSync, writeFileSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { PROJECT, FRAME_DT, timeOfFrame, appMarker, formatSize, formatSlug } from '../src/project-config';
@@ -165,12 +167,50 @@ function angleArgs() {
   return angle === 'swiftshader' ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] : [`--use-angle=${angle}`];
 }
 
-async function openPage(url: string) {
-  const browser = await chromium.launch({
-    channel: 'chrome',
+/**
+ * A Chromium-family browser that is installed, in the order the environment checker looks for one,
+ * for machines without Google Chrome (a Linux server, a container). Undefined when there is none.
+ */
+function installedChromium(): string | undefined {
+  for (const name of ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser', 'microsoft-edge']) {
+    const file = Bun.which(name);
+    if (file) return file;
+  }
+  const dir = process.env.PLAYWRIGHT_BROWSERS_PATH && process.env.PLAYWRIGHT_BROWSERS_PATH !== '0'
+    ? process.env.PLAYWRIGHT_BROWSERS_PATH
+    : process.platform === 'darwin' ? path.join(os.homedir(), 'Library', 'Caches', 'ms-playwright')
+      : process.platform === 'win32' ? path.join(process.env.LOCALAPPDATA || os.homedir(), 'ms-playwright')
+        : path.join(os.homedir(), '.cache', 'ms-playwright');
+  if (!existsSync(dir)) return undefined;
+  // the newest Chromium of Playwright, whatever revision the installed playwright-core expects
+  const revisions = readdirSync(dir).filter((d) => /^chromium-\d+$/.test(d)).sort((a, b) => Number(b.slice(9)) - Number(a.slice(9)));
+  const inside = ['chrome-linux64/chrome', 'chrome-linux/chrome', 'chrome-win64/chrome.exe', 'chrome-win/chrome.exe',
+    'chrome-mac-arm64/Chromium.app/Contents/MacOS/Chromium', 'chrome-mac/Chromium.app/Contents/MacOS/Chromium'];
+  for (const r of revisions) for (const f of inside) if (existsSync(path.join(dir, r, f))) return path.join(dir, r, f);
+  return undefined;
+}
+
+/**
+ * Google Chrome when it is installed; otherwise another Chromium-family browser found on the machine.
+ * CHROME_PATH names a browser to use instead.
+ */
+async function launchBrowser() {
+  const options = {
     headless: !flag('headed'),
     args: [...angleArgs(), '--enable-gpu-rasterization', '--ignore-gpu-blocklist', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows'],
-  });
+  };
+  if (process.env.CHROME_PATH) return chromium.launch({ ...options, executablePath: process.env.CHROME_PATH });
+  try {
+    return await chromium.launch({ ...options, channel: 'chrome' });
+  } catch (chromeError) {
+    const file = installedChromium();
+    if (!file) throw new Error(`no Chromium-family browser found for captures: install Google Chrome, or run \`npx playwright install chromium\`, or set CHROME_PATH\n${(chromeError as Error).message}`);
+    return chromium.launch({ ...options, executablePath: file });
+  }
+}
+
+async function openPage(url: string) {
+  const browser = await launchBrowser();
   try {
     const page = await browser.newPage({ viewport: { width: LW, height: LH }, deviceScaleFactor: 1 });
     const logs: string[] = [];
