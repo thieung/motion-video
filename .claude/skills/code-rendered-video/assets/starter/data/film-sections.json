@@ -1,0 +1,47 @@
+[
+ {
+  "name": "open-title-card",
+  "bar": 0,
+  "bars": 2
+ },
+ {
+  "name": "water-cold-kettle",
+  "bar": 2,
+  "bars": 2
+ },
+ {
+  "name": "water-rolling-boil",
+  "bar": 4,
+  "bars": 3
+ },
+ {
+  "name": "water-pour-off-boil",
+  "bar": 7,
+  "bars": 2
+ },
+ {
+  "name": "steep-leaves-drop",
+  "bar": 9,
+  "bars": 3
+ },
+ {
+  "name": "steep-colour-spreads",
+  "bar": 12,
+  "bars": 2
+ },
+ {
+  "name": "steep-timer-rings",
+  "bar": 14,
+  "bars": 4
+ },
+ {
+  "name": "recap-both-names",
+  "bar": 18,
+  "bars": 2
+ },
+ {
+  "name": "end-card",
+  "bar": 20,
+  "bars": 4
+ }
+]

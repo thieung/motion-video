@@ -1,0 +1,50 @@
+{
+  "comment": "The voice-over as data, written by the lead. One phrase per spoken sentence or breath group. `at` is where the phrase starts in the film, as a position in bars and beats counted from zero like shots.json (bar 2, beat 1 is the second beat of the third bar). The voice step writes audio/voice/<id>.wav and data/voice-words.json from this file; bun run score places each phrase at its position, ducks the music under it and writes data/lyrics.json for the captions.",
+  "voice": {
+    "engine": "sapi",
+    "name": "Microsoft Zira Desktop",
+    "rate": 0
+  },
+  "phrases": [
+    {
+      "id": "v01",
+      "text": "Boiling water on green leaves | turns the cup bitter.",
+      "at": {
+        "bar": 2,
+        "beat": 1
+      }
+    },
+    {
+      "id": "v02",
+      "text": "Let the kettle rest | a minute after the boil.",
+      "at": {
+        "bar": 4,
+        "beat": 2
+      }
+    },
+    {
+      "id": "v03",
+      "text": "Three minutes, | then lift them out.",
+      "at": {
+        "shot": "steep-colour-spreads",
+        "beat": 0
+      }
+    },
+    {
+      "id": "v04",
+      "text": "Mind the water, | mind the time.",
+      "at": {
+        "shot": "end-card",
+        "beat": 1
+      }
+    }
+  ],
+  "captions": {
+    "maxWords": 5,
+    "maxChars": 26,
+    "gap": 0.3,
+    "lead": 0.05,
+    "hold": 0.5,
+    "min": 0.7
+  }
+}

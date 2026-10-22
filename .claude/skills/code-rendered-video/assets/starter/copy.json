@@ -1,0 +1,21 @@
+{
+  "comment": "Every sentence the film shows, already broken into lines, one string per line on screen. The one source for the storyboard document and for the app. `labels` gives the small label over a plate of a caption kind (a kind without one has no label); `accents` gives the colour of the bar beside such a plate, as a palette key (default: signal). `sections` has one entry for each group of kind `section` in shots.json, joined on `group`; `n` and `name` must equal those of the group. The keys of `lines` are the caption kinds of the section.",
+  "labels": {"hook": "WITHOUT IT", "use": "DO IT WHEN"},
+  "accents": {"hook": "tangerine"},
+  "title": {"name": ["A Better", "Cup"], "line": ["two steps", "to a good cup of tea"]},
+  "closing": {"line": ["Mind the water,", "mind the time."]},
+  "sections": [
+    {"n": 1, "group": "water", "name": "Water",
+      "lines": {
+        "hook": ["Boiling water on green leaves", "turns the cup bitter."],
+        "idea": ["Let the kettle rest", "a minute after the boil."],
+        "use": ["Green and white teas,", "every time."]
+      }},
+    {"n": 2, "group": "steep", "name": "Steep",
+      "lines": {
+        "hook": ["Leave the leaves in too long", "and the cup turns flat."],
+        "idea": ["Three minutes,", "then lift them out."],
+        "use": ["Set a timer", "when you pour."]
+      }}
+  ]
+}
